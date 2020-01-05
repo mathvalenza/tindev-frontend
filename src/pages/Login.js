@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import './Login.css'; 
 
+import api from '../services/api';
+
 import logo from '../assets/logo.svg';
 
 export default function Login({ history }) {
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    
-    console.log(userName);
 
-    history.push('/main');
+
+    const response = await api.post('/devs', { username });
+
+    const { _id } = response.data;
+
+    history.push(`/dev/${_id}`);
   }
 
   return (
@@ -20,8 +25,8 @@ export default function Login({ history }) {
         <img src={logo} alt="TinDev" />
         <input
           placeholder="Digite seu usuário do GitHub"
-          value={userName}
-          onChange={e => setUserName(e.target.value)}
+          value={username}
+          onChange={e => setUsername(e.target.value)}
         />
         <button type="submit">Enviar</button>
       </form>
