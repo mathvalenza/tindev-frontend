@@ -13,6 +13,7 @@ import itsAMatch from '../assets/itsamatch.png';
 export default function Main({ match }) {
   const [users, setUsers] = useState([]);
   const [matchDev, setMatchDev] = useState(null);
+  const [usersAreLoaded, setUsersAreLoaded] = useState(false);
 
   useEffect(() => {
     async function loadUsers() {
@@ -23,7 +24,7 @@ export default function Main({ match }) {
       setUsers(response.data);
     }    
 
-    loadUsers();
+    loadUsers().then(() => setUsersAreLoaded(true));
   }, [match.params.id])
 
   useEffect(() => {
@@ -62,30 +63,31 @@ export default function Main({ match }) {
         <img src={logo} alt="TinDev"/>
       </Link>
         {
-        users.length > 0 ? (
-            <ul>
-                {users.map(user => (
-                <li key={user._id}>
-                  <img src={user.avatar} alt={user.name}/>
-                  <footer>
-                    <strong>{user.name}</strong>
-                    <p>
-                      {user.bio}
-                    </p>
-                  </footer>
+        usersAreLoaded && users.length === 0 ? <div className="empty"> Acabou :( </div>
+        : (
+          <ul>
+              {users.map(user => (
+              <li key={user._id}>
+                <img src={user.avatar} alt={user.name}/>
+                <footer>
+                  <strong>{user.name}</strong>
+                  <p>
+                    {user.bio}
+                  </p>
+                </footer>
 
-                  <div className="buttons">
-                    <button type="button" onClick={() => handleLike(user._id)}>
-                      <img src={like} alt="Like" />
-                    </button>
-                    <button type="button" onClick={() => handleDislike(user._id)}>
-                      <img src={dislike} alt="Dislike" />
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : <div className="empty"> Acabou :( </div>
+                <div className="buttons">
+                  <button type="button" onClick={() => handleLike(user._id)}>
+                    <img src={like} alt="Like" />
+                  </button>
+                  <button type="button" onClick={() => handleDislike(user._id)}>
+                    <img src={dislike} alt="Dislike" />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
         }
 
         { matchDev && (
